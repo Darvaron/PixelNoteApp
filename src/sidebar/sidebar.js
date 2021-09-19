@@ -1,0 +1,20 @@
+import React from 'react'
+import {withStyles} from '@material-ui/core/styles'
+import styles from './styles'
+import List from '@material-ui/core/List'
+import { Divider, Button } from '@material-ui/core'
+import SidebarItemComponent from '../sidebarItem/sidebarItem'
+
+// Barra lateral del proyecto
+
+class SidebarComponent extends React.Component{
+    constructor(){
+        super()
+    }
+
+    render(){
+        return(<div>Sidebar</div>)
+    }
+}
+
+export default withStyles(styles)(SidebarComponent) // Exporta el componente con estilos
