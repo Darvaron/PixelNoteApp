@@ -17,31 +17,70 @@ class EditorComponent extends React.Component {
     }
   }
 
-  render() {
-    const { classes } = this.props
+  componentDidUpdate = () => {
+    // Cuando se actualiza el componente
+    if (this.props.selectedNote.id !== this.state.id) {
+      // Si seleccionó otra nota
+      this.setState({
+        text: this.props.selectedNote.body,
+        title: this.props.selectedNote.title,
+        id: this.props.selectedNote.id,
+      })
+    }
+  }
 
-    // value -- texto al cargar el editor
+  componentDidMount = () => {
+    // Cuando se monta el componente
+    this.setState({
+      text: this.props.selectedNote.body,
+      title: this.props.selectedNote.title,
+      id: this.props.selectedNote.id,
+    })
+  }
+
+  render() {
+    // classes -- estilos
+    const { classes } = this.props
 
     return (
       <div className={classes.editorContainer}>
+        <BorderColorIcon className={classes.editIcon}></BorderColorIcon>
+        <input
+          className={classes.titleInput}
+          placeholder='Título de la nota...'
+          value={this.state.title ? this.state.title : ''}
+          onChange={(e) => this.updateTitle(e.target.value)}
+        ></input>
+        {/*value -- texto al cargar el editor
+          onChange -- acción a realizar cuando se actualiza el editor
+        */}
         <ReactQuill
-          value={this.state.text}
+          value={this.state.text} // Texto desplegado en el editor
           onChange={this.updateBody}
         ></ReactQuill>
       </div>
     )
   }
-
-  updateBody = async(val) => { // Función asincrona que actualiza el estado
-      await this.setState({ text: val })
-      this.update()
+  
+  // Actualiza el título
+  updateTitle = async (val) => {
+    await this.setState({ title: val})
+    this.update()
   }
 
-  update = debounce(() => { // Espera a que el usuario pare 1.5 segundos y en dado caso guarda en la base de datos
-    console.log('ACTUALIZANDO LA BASE DE DATOS')
-    // Actualiza
-  }, 1500)
+  updateBody = async (val) => {
+    // Función asincrona que actualiza el estado
+    await this.setState({ text: val })
+    this.update()
+  }
 
+  update = debounce(() => {
+    // Espera a que el usuario pare 1.5 segundos y en dado caso actualza la base de datos
+    this.props.noteUpdate(this.state.id, {
+      title: this.state.title,
+      body: this.state.text,
+    })
+  }, 1500)
 }
 
 export default withStyles(styles)(EditorComponent) // Exporta el componente con estilos
