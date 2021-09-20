@@ -47,7 +47,7 @@ class EditorComponent extends React.Component {
         <BorderColorIcon className={classes.editIcon}></BorderColorIcon>
         <input
           className={classes.titleInput}
-          placeholder='Título de la nota...'
+          placeholder="Título de la nota..."
           value={this.state.title ? this.state.title : ''}
           onChange={(e) => this.updateTitle(e.target.value)}
         ></input>
@@ -57,14 +57,48 @@ class EditorComponent extends React.Component {
         <ReactQuill
           value={this.state.text} // Texto desplegado en el editor
           onChange={this.updateBody}
+          modules={this.modules}
+          formats={this.formats}
         ></ReactQuill>
       </div>
     )
   }
-  
+
+  // Modulo de ReactQuill
+  modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }, { font: [] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [
+        { list: 'ordered' },
+        { list: 'bullet' },
+        { indent: '-1' },
+        { indent: '+1' },
+      ],
+      ['link', 'image', 'video'],
+      ['clean'],
+    ],
+  }
+
+  formats = [
+    'header',
+    'font',
+    'size',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'blockquote',
+    'list',
+    'bullet',
+    'indent',
+    'link',
+    'image',
+    'video'
+  ]
   // Actualiza el título
   updateTitle = async (val) => {
-    await this.setState({ title: val})
+    await this.setState({ title: val })
     this.update()
   }
 
