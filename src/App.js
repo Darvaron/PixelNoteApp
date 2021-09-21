@@ -5,6 +5,7 @@ import 'firebase/firestore'
 
 import SidebarComponent from './sidebar/sidebar'
 import EditorComponent from './editor/editor'
+import Canvas from './canvas/canvas'
 
 // Clase principal de React
 
@@ -39,6 +40,9 @@ class App extends React.Component {
           ></EditorComponent>
         ) : // Si no ha seleccionada nada no despliega el editor
         null}
+        {this.state.selectedNote ? ( // Si ha seleccionado una nota
+          <Canvas></Canvas>
+        ) : null}
       </div>
     )
   }
