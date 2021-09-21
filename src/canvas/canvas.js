@@ -3,6 +3,17 @@ import './styles.css'
 
 // Componente para dibujar
 
+// FALTA MODIFICAR EN LOS ESTILOS DEL EDITOR:
+
+/** 
+ * 
+ *  editorContainer: {
+      height: '70%',
+      width: '100%',
+      boxSizing: 'border-box'
+    }
+ */
+
 function Canvas() {
   // Referencia al canvas actual
   const canvasRef = useRef(null)

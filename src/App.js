@@ -40,9 +40,9 @@ class App extends React.Component {
           ></EditorComponent>
         ) : // Si no ha seleccionada nada no despliega el editor
         null}
-        {this.state.selectedNote ? ( // Si ha seleccionado una nota
-          <Canvas></Canvas>
-        ) : null}
+        {/*{this.state.selectedNote ? ( // Si ha seleccionado una nota
+          <Canvas/>
+        ) : null}*/}
       </div>
     )
   }
