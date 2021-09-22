@@ -1,9 +1,12 @@
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
+import { Redirect } from "react-router-dom"
 import styles from './styles'
 import List from '@material-ui/core/List'
 import { Divider, Button } from '@material-ui/core'
 import SidebarItemComponent from '../sidebarItem/sidebarItem'
+import firebase from 'firebase'
+import 'firebase/firestore'
 
 // Barra lateral del proyecto
 
@@ -67,12 +70,19 @@ class SidebarComponent extends React.Component {
               })
             }
           </List>
+          <Button onClick={this.signOut} className={classes.signOutBtn}>Cerrar sesión</Button>
         </div>
       )
     } else {
       // No genera nada mientras carga las notas
       return <div></div>
     }
+  }
+
+  // Acción a realizar el botón de cerrar sesión
+  signOut = () => {
+    firebase.auth().signOut()
+    this.props.signOut()
   }
 
   // Actualiza el título del texto

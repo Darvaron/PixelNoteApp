@@ -17,34 +17,45 @@ class App extends React.Component {
       selectedNoteIndex: null,
       selectedNote: null,
       notes: null,
+      email: null,
     }
   }
 
   render() {
     // Página principal de la aplicación
-    return (
-      <div className="app-container">
-        <SidebarComponent
-          selectedNoteIndex={this.state.selectedNoteIndex}
-          notes={this.state.notes}
-          deleteNote={this.deleteNote}
-          selectNote={this.selectNote}
-          newNote={this.newNote}
-        ></SidebarComponent>
-        {this.state.selectedNote ? ( // Si ha seleccionado una nota
-          <EditorComponent
-            selectedNote={this.state.selectedNote}
+    if (this.state.email) {
+      return (
+        <div className="app-container">
+          <SidebarComponent
             selectedNoteIndex={this.state.selectedNoteIndex}
             notes={this.state.notes}
-            noteUpdate={this.noteUpdate}
-          ></EditorComponent>
-        ) : // Si no ha seleccionada nada no despliega el editor
-        null}
-        {/*{this.state.selectedNote ? ( // Si ha seleccionado una nota
-          <Canvas/>
-        ) : null}*/}
-      </div>
-    )
+            deleteNote={this.deleteNote}
+            selectNote={this.selectNote}
+            newNote={this.newNote}
+            signOut={this.signOut}
+          ></SidebarComponent>
+          {this.state.selectedNote ? ( // Si ha seleccionado una nota
+            <EditorComponent
+              selectedNote={this.state.selectedNote}
+              selectedNoteIndex={this.state.selectedNoteIndex}
+              notes={this.state.notes}
+              noteUpdate={this.noteUpdate}
+            ></EditorComponent>
+          ) : // Si no ha seleccionada nada no despliega el editor
+          null}
+          {/*{this.state.selectedNote ? ( // Si ha seleccionado una nota
+            <Canvas/>
+          ) : null}*/}
+        </div>
+      )
+    }else{
+      return(<div>CARGANDO ...</div>)
+    }
+  }
+
+  // Cierre de sesión
+  signOut = () => {
+    this.props.history.push('/login')
   }
 
   // Elimina la nota
@@ -96,6 +107,7 @@ class App extends React.Component {
       // Crea un nuevo registro en la base de datos
       title: note.title,
       body: note.body,
+      email: this.state.email,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(), // Fecha de creación
     })
     const newID = newFromDB.id
@@ -114,6 +126,7 @@ class App extends React.Component {
     firebase.firestore().collection('notes').doc(id).update({
       title: note.title,
       body: note.body,
+      email: this.state.email,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(), // Última vez editado
     })
   }
@@ -128,20 +141,30 @@ class App extends React.Component {
 
   // Cuando el cargue satisfactoriamente se llama automaticamente
   componentDidMount = () => {
-    firebase
-      .firestore()
-      .collection('notes') // Obtiene lo que encuentre en notes
-      .onSnapshot((serverUpdate) => {
-        // Cada vez que se actualice la base de datos
-        const notes = serverUpdate.docs.map((_doc) => {
-          // Mapeado
-          const data = _doc.data()
-          data['id'] = _doc.id
-          return data
+    firebase.auth().onAuthStateChanged(async (_usr) => {
+      if(!_usr){
+        this.props.history.push('/login')
+      }
+      else{
+        await firebase
+        .firestore()
+        .collection('notes')
+        .where('email', '==', _usr.email)
+        .onSnapshot((serverUpdate) => {
+          // Cada vez que se actualice la base de datos
+          const notes = serverUpdate.docs.map((_doc) => {
+            // Mapeado
+            const data = _doc.data()
+            data['id'] = _doc.id
+            return data
+          })
+          //console.log(notes)
+          this.setState({ notes: notes,
+            email: _usr.email
+          })
         })
-        //console.log(notes)
-        this.setState({ notes: notes })
-      })
+      }
+    })
   }
 }
 
